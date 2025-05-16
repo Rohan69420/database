@@ -15,8 +15,9 @@ public class Order {
     @Column(name = "OrderId")
     private Integer orderId;
 
-    @Column(name = "CustomerID")
-    private Integer customerId;
+    @ManyToOne
+    @JoinColumn(name="userId", nullable=false)
+    private User user;
 
     @Column(name = "OrderDate", length = 20)
     private String orderDate;

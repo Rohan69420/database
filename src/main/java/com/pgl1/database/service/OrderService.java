@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class OrderService {
 
-    @Autowired
     private final OrderRepository orderRepository;
 
     public OrderService(OrderRepository orderRepository){
@@ -16,13 +15,8 @@ public class OrderService {
     }
 
     public Order createOrder(Order order){
-        Order createdOrder = new Order();
-        createdOrder.setCustomerId(order.getCustomerId());
-        createdOrder.setOrderDate(order.getOrderDate());
 
-        Order savedOrder = orderRepository.save(createdOrder);
-
-        return savedOrder;
+       return orderRepository.save(order);
     }
 
     public Order updateOrder(Order order){

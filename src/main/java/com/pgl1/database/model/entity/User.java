@@ -3,6 +3,8 @@ package com.pgl1.database.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Entity
 @Getter
 @Setter
@@ -24,5 +26,8 @@ public class User {
 
     @Column(name="UserLocation", length = 100)
     private String userLocation;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Order> orders;
 
 }

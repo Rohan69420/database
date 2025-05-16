@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class OrderHistoryService {
 
-    @Autowired
     private final OrderHistoryRepository orderHistoryRepository;
 
     public OrderHistoryService(OrderHistoryRepository orderHistoryRepository){
