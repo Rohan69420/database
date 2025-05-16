@@ -16,7 +16,7 @@ public class Order {
     private Integer orderId;
 
     @Column(name = "CustomerID")
-    private Integer customerID;
+    private Integer customerId;
 
     @Column(name = "OrderDate", length = 20)
     private String orderDate;

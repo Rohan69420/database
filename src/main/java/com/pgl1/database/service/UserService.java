@@ -1,8 +1,8 @@
 package com.pgl1.database.service;
 
-import com.pgl1.database.dto.request.UserUpdateDTO;
-import com.pgl1.database.dto.request.UserWriteDTO;
-import com.pgl1.database.dto.response.UserReadDTO;
+import com.pgl1.database.dto.request.user.UserUpdateDTO;
+import com.pgl1.database.dto.request.user.UserWriteDTO;
+import com.pgl1.database.dto.response.user.UserReadDTO;
 import com.pgl1.database.model.entity.User;
 import com.pgl1.database.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

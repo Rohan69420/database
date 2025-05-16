@@ -1,8 +1,8 @@
 package com.pgl1.database.controller;
 
-import com.pgl1.database.dto.request.UserUpdateDTO;
-import com.pgl1.database.dto.request.UserWriteDTO;
-import com.pgl1.database.dto.response.UserReadDTO;
+import com.pgl1.database.dto.request.user.UserUpdateDTO;
+import com.pgl1.database.dto.request.user.UserWriteDTO;
+import com.pgl1.database.dto.response.user.UserReadDTO;
 import com.pgl1.database.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
