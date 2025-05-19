@@ -13,5 +13,4 @@ public class UserReadDTO {
     private Integer userId;
     private String userName;
     private String userPhone;
-    private String userLocation;
 }
