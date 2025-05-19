@@ -14,7 +14,7 @@ import java.util.UUID;
 public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "LocationID")
+    @Column(name = "LocationId")
     private Integer locationId;
 
     @Column(name = "Country", length = 20)

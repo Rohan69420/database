@@ -16,9 +16,16 @@ public class Order {
     private Integer orderId;
 
     @ManyToOne
-    @JoinColumn(name="userId", nullable=false)
+    @JoinColumn(name="UserID", nullable=false)
     private User user;
 
     @Column(name = "OrderDate", length = 20)
     private String orderDate;
+
+    @Column(name = "OrderStatus", length = 20, nullable = false)
+    private String orderStatus;
+
+    @ManyToOne
+    @JoinColumn(name="PickupPointId")
+    private PickupPoint pickupPoint;
 }

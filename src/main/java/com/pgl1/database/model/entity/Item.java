@@ -3,7 +3,6 @@ package com.pgl1.database.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.UUID;
 
 @Entity
 @Table(name="Item")
@@ -25,4 +24,8 @@ public class Item {
 
     @Column(name="ItemWeight", nullable = false)
     private float itemWeight;
+
+    @ManyToOne
+    @JoinColumn(name="orderId", nullable = false)
+    private Order order;
 }

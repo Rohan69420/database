@@ -24,10 +24,11 @@ public class User {
     @Column(name="UserPhone", length = 50)
     private String userPhone;
 
-    @Column(name="UserLocation", length = 100)
-    private String userLocation;
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Order> orders;
+
+    @ManyToOne
+    @JoinColumn(name="LocationId")
+    private Location locationId;
 
 }
