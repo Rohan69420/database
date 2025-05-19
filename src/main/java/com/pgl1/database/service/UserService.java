@@ -6,10 +6,11 @@ import com.pgl1.database.dto.response.user.UserReadDTO;
 import com.pgl1.database.mapper.UserMapper;
 import com.pgl1.database.model.entity.User;
 import com.pgl1.database.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
@@ -21,17 +22,20 @@ public class UserService {
     }
 
     public UserReadDTO createUser(UserWriteDTO userWriteDTO) {
-        User savedUser =  userRepository.save(userMapper.userWriteDTOToUser(userWriteDTO););
+        User savedUser =  userRepository.save(userMapper.userWriteDTOToUser(userWriteDTO));
+        log.info("A new user has been created");
         return userMapper.userToUserReadDTO(savedUser);
     }
 
     public UserReadDTO updateUser(UserUpdateDTO userUpdateDTO) {
         User updatedUser = userRepository.save(userMapper.userUpdateDTOToUser(userUpdateDTO));
+        log.info("A user has been updated");
         return userMapper.userToUserReadDTO(updatedUser);
     }
 
     public void deleteUser(Integer userId) {
         userRepository.deleteById(userId);
+        log.info("A user has been deleted");
     }
 
 

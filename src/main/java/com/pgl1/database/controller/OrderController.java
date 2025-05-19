@@ -1,8 +1,9 @@
 package com.pgl1.database.controller;
 
-import com.pgl1.database.model.entity.Order;
+import com.pgl1.database.dto.request.order.OrderUpdateDTO;
+import com.pgl1.database.dto.request.order.OrderWriteDTO;
+import com.pgl1.database.dto.response.order.OrderReadDTO;
 import com.pgl1.database.service.OrderService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,14 +19,14 @@ public class OrderController {
     public OrderController(OrderService orderService){ this.orderService = orderService; }
 
     @PostMapping("/create")
-    public ResponseEntity<Order> createOrder(@RequestBody Order order){
-        Order savedOrder = orderService.createOrder(order);
+    public ResponseEntity<OrderReadDTO> createOrder(@RequestBody OrderWriteDTO orderWriteDTO){
+        OrderReadDTO savedOrder = orderService.createOrder(orderWriteDTO);
         return new ResponseEntity<>(savedOrder, HttpStatus.CREATED);
     }
 
     @PostMapping("/update")
-    public ResponseEntity<Order> updateOrder(@RequestBody Order order){
-        Order updatedOrder = orderService.updateOrder(order);
+    public ResponseEntity<OrderReadDTO> updateOrder(@RequestBody OrderUpdateDTO orderUpdateDTO){
+        OrderReadDTO updatedOrder = orderService.updateOrder(orderUpdateDTO);
         return new ResponseEntity<>(updatedOrder, HttpStatus.OK);
     }
 
