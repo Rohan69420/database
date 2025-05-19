@@ -21,23 +21,13 @@ public class UserService {
     }
 
     public UserReadDTO createUser(UserWriteDTO userWriteDTO) {
-        User user = userMapper.userWriteDTOToUser(userWriteDTO);
-
-        User savedUser =  userRepository.save(user);
-
+        User savedUser =  userRepository.save(userMapper.userWriteDTOToUser(userWriteDTO););
         return userMapper.userToUserReadDTO(savedUser);
     }
 
     public UserReadDTO updateUser(UserUpdateDTO userUpdateDTO) {
-        User user = new User();
-        user.setUserId(userUpdateDTO.getUserId());
-        user.setUserName(userUpdateDTO.getUserName());
-        user.setUserPhone(userUpdateDTO.getUserPhone());
-        user.setUserLocation(userUpdateDTO.getUserLocation());
-
-        User savedUser =  userRepository.save(user);
-
-        return userMapper.userToUserReadDTO(savedUser);
+        User updatedUser = userRepository.save(userMapper.userUpdateDTOToUser(userUpdateDTO));
+        return userMapper.userToUserReadDTO(updatedUser);
     }
 
     public void deleteUser(Integer userId) {
