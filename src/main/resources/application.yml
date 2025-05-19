@@ -6,10 +6,15 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: po@localhost
     password: Log!n147
-
-
   jpa:
     hibernate:
       ddl-auto: create
     show-sql: true
     format-sql: true
+
+logging:
+  file:
+    path: "."
+    name: "application.log"
+  level:
+    root: INFO
