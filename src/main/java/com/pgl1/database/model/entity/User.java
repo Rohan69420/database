@@ -1,34 +1,43 @@
 package com.pgl1.database.model.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Entity
-@Getter
-@Setter
-@Table(name="Users")
+@Table(name="users")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Builder
+@EqualsAndHashCode(exclude = "id")
+
 public class User {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    @Column(name="UserID")
-    private Integer userId;
+    @Column(name="id")
+    private Long id;
 
-    @Column(name="UserName", length= 50)
-    private String userName;
+    @Column(name="name", length = 20, nullable = false)
+    private String name;
 
-    @Column(name="UserPhone", length = 50)
-    private String userPhone;
+    @NotNull
+    @Column(name="phone", length = 10, nullable = false)
+    private String phone;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Order> orders;
+    @OneToOne
+    @JoinColumn(name="location_id")
+    private Location location;
 
-    @ManyToOne
-    @JoinColumn(name="LocationId")
-    private Location locationId;
+    @CreationTimestamp
+    @Column(name = "created_date")
+    private LocalDateTime createdTimestamp;
+
+    @UpdateTimestamp
+    @Column(name = "updated_time")
+    private LocalDateTime updatedTimestamp;
+
 
 }

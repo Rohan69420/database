@@ -3,30 +3,25 @@ package com.pgl1.database.model.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.UUID;
-
 @Entity
-@Table(name="Location")
+@Table(name="locations")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Builder
+@EqualsAndHashCode(exclude = "id")
 
 public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "LocationId")
-    private Integer locationId;
+    @Column(name = "id")
+    private Long id;
 
-    @Column(name = "Country", length = 20)
+    @Column(name = "country", length = 20)
     private String country;
 
-    @Column(name = "City", length = 30)
+    @Column(name = "city", length = 20)
     private String city;
 
-    @Column(name = "Street", length = 30)
+    @Column(name = "street", length = 20)
     private String street;
-
-    @Column(name = "Zip", length = 10)
-    private String zip;
 
 }

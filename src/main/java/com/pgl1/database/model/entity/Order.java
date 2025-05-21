@@ -1,31 +1,52 @@
 package com.pgl1.database.model.entity;
 
+import com.pgl1.database.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name="Orders")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Builder
+@EqualsAndHashCode(exclude = "id")
 
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "OrderId")
-    private Integer orderId;
+    @Column(name = "id")
+    private Long id;
+
+    @Column(name = "name")
+    private String name;
+
+    @OneToMany(mappedBy = "order")
+    @JoinColumn(name = "items")
+    private List<Item> items;
 
     @ManyToOne
-    @JoinColumn(name="UserID", nullable=false)
+    @JoinColumn(name="user_id", nullable=false)
     private User user;
 
-    @Column(name = "OrderDate", length = 20)
-    private String orderDate;
+    @OneToOne
+    @JoinColumn(name="source_pickup_id")
+    private PickupPoint source;
 
-    @Column(name = "OrderStatus", length = 20, nullable = false)
-    private String orderStatus;
+    @OneToOne
+    @JoinColumn(name="destination_pickup_id")
+    private PickupPoint destination;
 
-    @ManyToOne
-    @JoinColumn(name="PickupPointId")
-    private PickupPoint pickupPoint;
+    @Column(name = "type")
+    private String type;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", length = 20, nullable = false)
+    private OrderStatus status;
+
+    @Column(name = "date")
+    @CreationTimestamp
+    private LocalDateTime createdTimestamp;
 }
