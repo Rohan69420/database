@@ -1,13 +1,14 @@
 package com.pgl1.database.service;
 
-import com.pgl1.database.dto.request.order.OrderUpdateDTO;
-import com.pgl1.database.dto.request.order.OrderWriteDTO;
-import com.pgl1.database.dto.response.order.OrderReadDTO;
+import com.pgl1.database.dto.request.OrderCreateDTO;
+import com.pgl1.database.dto.request.OrderUpdateDTO;
+import com.pgl1.database.repository.OrderRepository;
+import com.pgl1.database.dto.response.OrderViewDTO;
 import com.pgl1.database.mapper.OrderMapper;
 import com.pgl1.database.model.entity.Order;
-import com.pgl1.database.repository.OrderRepository;
-import jakarta.persistence.EntityNotFoundException;
+
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -25,22 +26,21 @@ public class OrderService {
         this.orderMapper = orderMapper;
     }
 
-    public OrderReadDTO createOrder(OrderWriteDTO orderWriteDTO){
-        Order savedOrder =  orderRepository.save(orderMapper.orderWriteDTOToOrder(orderWriteDTO));
+    public OrderViewDTO createOrder(OrderCreateDTO orderCreateDTO){
+        Order savedOrder =  orderRepository.save(orderMapper.orderCreateDTOToOrder(orderCreateDTO));
         log.info("An order has been created");
         orderHistoryService.recordOrderCreation(savedOrder);
-       return orderMapper.orderToOrderReadDTO(savedOrder);
+       return orderMapper.orderToOrderViewDTO(savedOrder);
     }
 
-    public OrderReadDTO updateOrder(OrderUpdateDTO orderUpdateDTO){
-        Order existingOrder = orderRepository.findById(orderUpdateDTO.getOrderId())
-                .orElseThrow(() -> new EntityNotFoundException("Order not found"));
+    public OrderViewDTO updateOrder(OrderUpdateDTO orderUpdateDTO){
+        Order existingOrder = orderRepository.findById(orderUpdateDTO.getId());
         Order previousState = new Order();
         BeanUtils.copyProperties(existingOrder, previousState);
         Order updatedOrder = orderRepository.save(orderMapper.orderUpdateDTOToOrder(orderUpdateDTO));
 
         log.info("An order has been updated");
         orderHistoryService.recordOrderUpdate(previousState, updatedOrder);
-        return orderMapper.orderToOrderReadDTO(updatedOrder);
+        return orderMapper.orderToOrderViewDTO(updatedOrder);
     }
 }

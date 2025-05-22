@@ -1,10 +1,18 @@
 package com.pgl1.database.controller;
 
-import com.pgl1.database.model.entity.PickupPoint;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+import com.pgl1.database.dto.request.PickupPointCreateDTO;
+import com.pgl1.database.dto.request.PickupPointUpdateDTO;
+import com.pgl1.database.dto.response.PickupPointViewDTO;
 import com.pgl1.database.service.PickupPointService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
 
 @RestController
 @RequestMapping("/pickup-points")
@@ -16,14 +24,14 @@ public class PickupPointController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<PickupPoint> createPickupPoint(@RequestBody PickupPoint pickupPoint){
-        PickupPoint createdPickupPoint = pickupPointService.createPickupPoint(pickupPoint);
+    public ResponseEntity<PickupPointViewDTO> createPickupPoint(@RequestBody PickupPointCreateDTO pickupPointCreateDTO){
+        PickupPointViewDTO createdPickupPoint = pickupPointService.createPickupPoint(pickupPointCreateDTO);
         return new ResponseEntity<>(createdPickupPoint, HttpStatus.CREATED);
     }
 
     @PostMapping("/update")
-    public ResponseEntity<PickupPoint> updatePickupPoint(@RequestBody PickupPoint pickupPoint){
-        PickupPoint updatedPickupPoint = pickupPointService.updatePickupPoint(pickupPoint);
+    public ResponseEntity<PickupPointViewDTO> updatePickupPoint(@RequestBody PickupPointUpdateDTO pickupPointUpdateDTO){
+        PickupPointViewDTO updatedPickupPoint = pickupPointService.updatePickupPoint(pickupPointUpdateDTO);
         return new ResponseEntity<>(updatedPickupPoint, HttpStatus.OK);
     }
 

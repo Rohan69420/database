@@ -1,7 +1,15 @@
 package com.pgl1.database.model.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Id;
+
+import lombok.EqualsAndHashCode;
+import lombok.Builder;
+import lombok.Data;
 
 @Entity
 @Table(name="locations")

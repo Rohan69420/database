@@ -1,13 +1,22 @@
 package com.pgl1.database.controller;
 
-import com.pgl1.database.dto.request.user.UserUpdateDTO;
-import com.pgl1.database.dto.request.user.UserWriteDTO;
-import com.pgl1.database.dto.response.user.UserReadDTO;
-import com.pgl1.database.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import jakarta.validation.Valid;
+
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+
+import com.pgl1.database.dto.request.UserUpdateDTO;
+import com.pgl1.database.dto.request.UserCreateDTO;
+import com.pgl1.database.dto.response.UserViewDTO;
+import com.pgl1.database.service.UserService;
+
 
 @RestController
 @RequestMapping("/users")
@@ -19,14 +28,14 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<UserReadDTO> createUser(@RequestBody UserWriteDTO userWriteDTO) {
-        UserReadDTO savedUser = userService.createUser(userWriteDTO);
+    public ResponseEntity<UserViewDTO> createUser(@RequestBody UserCreateDTO userCreateDTO) {
+        UserViewDTO savedUser = userService.createUser(userCreateDTO);
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
 
     @PostMapping("/update")
-    public ResponseEntity<UserReadDTO> updateUser(@RequestBody UserUpdateDTO userUpdateDTO) {
-        UserReadDTO updatedUser = userService.updateUser(userUpdateDTO);
+    public ResponseEntity<UserViewDTO> updateUser(@Valid @RequestBody UserUpdateDTO updateUser) {
+        UserViewDTO updatedUser = userService.updateUser(updateUser);
         return new ResponseEntity<>(updatedUser, HttpStatus.CREATED);
     }
 
@@ -34,6 +43,12 @@ public class UserController {
     public ResponseEntity<Void> deleteUser(@PathVariable Integer userId){
         userService.deleteUser(userId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/find/{email}")
+    public ResponseEntity<UserViewDTO> findUser(@PathVariable String email){
+        UserViewDTO user = userService.fetchUser(email);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
 }

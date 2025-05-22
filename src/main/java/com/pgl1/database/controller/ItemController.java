@@ -1,10 +1,17 @@
 package com.pgl1.database.controller;
 
-import com.pgl1.database.model.entity.Item;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.http.ResponseEntity;
 import com.pgl1.database.service.ItemService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+
+import com.pgl1.database.dto.request.ItemCreateDTO;
+import com.pgl1.database.dto.request.ItemUpdateDTO;
+import com.pgl1.database.dto.response.ItemViewDTO;
 
 @RestController
 @RequestMapping("/items")
@@ -16,14 +23,14 @@ public class ItemController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Item> createItem(Item item){
-        Item savedItem = itemService.createItem(item);
+    public ResponseEntity<ItemViewDTO> createItem(ItemCreateDTO itemCreateDTO){
+        ItemViewDTO savedItem = itemService.createItem(itemCreateDTO);
         return new ResponseEntity<>(savedItem, HttpStatus.CREATED);
     }
 
     @PostMapping("/update")
-    public ResponseEntity<Item> updateItem(Item item){
-        Item updatedItem = itemService.updateItem(item);
+    public ResponseEntity<ItemViewDTO> updateItem(ItemUpdateDTO itemUpdateDTO){
+        ItemViewDTO updatedItem = itemService.updateItem(itemUpdateDTO);
         return new ResponseEntity<>(updatedItem, HttpStatus.OK);
     }
 
