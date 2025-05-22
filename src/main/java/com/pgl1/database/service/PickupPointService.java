@@ -29,7 +29,7 @@ public class PickupPointService {
         return pickupPointMapper.pickupPointToPickupPointViewDTO(updatedPickupPoint);
     }
 
-    public void deletePickupPoint(Integer pickupPointId){
-        pickupPointRepository.deleteById(pickupPointId);
+    public void deletePickupPoint(Long id){
+        pickupPointRepository.deleteById(id);
     }
 }

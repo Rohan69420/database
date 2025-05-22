@@ -31,7 +31,7 @@ public class LocationService {
     }
 
 
-    public void deleteLocation(Integer locationId){
-        locationRepository.deleteById(locationId);
+    public void deleteLocation(Long id){
+        locationRepository.deleteById(id);
     }
 }

@@ -28,7 +28,7 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<UserViewDTO> createUser(@RequestBody UserCreateDTO userCreateDTO) {
+    public ResponseEntity<UserViewDTO> createUser(@Valid @RequestBody UserCreateDTO userCreateDTO) {
         UserViewDTO savedUser = userService.createUser(userCreateDTO);
         return new ResponseEntity<>(savedUser, HttpStatus.CREATED);
     }
@@ -40,7 +40,7 @@ public class UserController {
     }
 
     @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Integer userId){
+    public ResponseEntity<Void> deleteUser(@PathVariable Long userId){
         userService.deleteUser(userId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

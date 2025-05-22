@@ -1,5 +1,6 @@
 package com.pgl1.database.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,19 +26,19 @@ public class LocationController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<LocationViewDTO> createLocation(@RequestBody LocationCreateDTO locationCreateDTO){
+    public ResponseEntity<LocationViewDTO> createLocation(@RequestBody @Valid LocationCreateDTO locationCreateDTO){
         LocationViewDTO createdLocation = locationService.createLocation(locationCreateDTO);
         return new ResponseEntity<>(createdLocation, HttpStatus.CREATED);
     }
 
     @PostMapping("/update")
-    public ResponseEntity<LocationViewDTO> updateLocation(@RequestBody LocationUpdateDTO locationUpdateDTO){
+    public ResponseEntity<LocationViewDTO> updateLocation(@RequestBody @Valid LocationUpdateDTO locationUpdateDTO){
         LocationViewDTO updatedLocation = locationService.updateLocation(locationUpdateDTO);
         return new ResponseEntity<>(updatedLocation, HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{locationId}")
-    public ResponseEntity<Void> deleteLocation(@PathVariable Integer locationId){
+    public ResponseEntity<Void> deleteLocation(@PathVariable Long locationId){
         locationService.deleteLocation(locationId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

@@ -29,7 +29,7 @@ public class ItemService {
         return itemMapper.itemToItemViewDTO(updatedItem);
     }
 
-    public void deleteItem(Integer itemId){
-        itemRepository.deleteById(itemId);
+    public void deleteItem(Long id){
+        itemRepository.deleteById(id);
     }
 }

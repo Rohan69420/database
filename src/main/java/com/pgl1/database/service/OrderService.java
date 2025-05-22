@@ -34,7 +34,7 @@ public class OrderService {
     }
 
     public OrderViewDTO updateOrder(OrderUpdateDTO orderUpdateDTO){
-        Order existingOrder = orderRepository.findById(orderUpdateDTO.getId());
+        Order existingOrder = orderRepository.findById(orderUpdateDTO.getId()).orElse(null);
         Order previousState = new Order();
         BeanUtils.copyProperties(existingOrder, previousState);
         Order updatedOrder = orderRepository.save(orderMapper.orderUpdateDTOToOrder(orderUpdateDTO));

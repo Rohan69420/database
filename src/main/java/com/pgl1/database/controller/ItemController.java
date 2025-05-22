@@ -1,5 +1,7 @@
 package com.pgl1.database.controller;
 
+import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,19 +25,19 @@ public class ItemController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ItemViewDTO> createItem(ItemCreateDTO itemCreateDTO){
+    public ResponseEntity<ItemViewDTO> createItem(@RequestBody @Valid ItemCreateDTO itemCreateDTO){
         ItemViewDTO savedItem = itemService.createItem(itemCreateDTO);
         return new ResponseEntity<>(savedItem, HttpStatus.CREATED);
     }
 
     @PostMapping("/update")
-    public ResponseEntity<ItemViewDTO> updateItem(ItemUpdateDTO itemUpdateDTO){
+    public ResponseEntity<ItemViewDTO> updateItem(@RequestBody @Valid ItemUpdateDTO itemUpdateDTO){
         ItemViewDTO updatedItem = itemService.updateItem(itemUpdateDTO);
         return new ResponseEntity<>(updatedItem, HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{itemId}")
-    public ResponseEntity<Void> deleteItem(@PathVariable Integer itemId){
+    public ResponseEntity<Void> deleteItem(@PathVariable Long itemId){
         itemService.deleteItem(itemId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }

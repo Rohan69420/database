@@ -42,7 +42,7 @@ public class Order {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany
     @JoinColumn(name = "items")
     private List<Item> items;
 

@@ -1,5 +1,6 @@
 package com.pgl1.database.controller;
 
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,13 +21,13 @@ public class OrderController {
     public OrderController(OrderService orderService){ this.orderService = orderService; }
 
     @PostMapping("/create")
-    public ResponseEntity<OrderViewDTO> createOrder(@RequestBody OrderCreateDTO orderCreateDTO){
+    public ResponseEntity<OrderViewDTO> createOrder(@RequestBody @Valid OrderCreateDTO orderCreateDTO){
         OrderViewDTO savedOrder = orderService.createOrder(orderCreateDTO);
         return new ResponseEntity<>(savedOrder, HttpStatus.CREATED);
     }
 
     @PostMapping("/update")
-    public ResponseEntity<OrderViewDTO> updateOrder(@RequestBody OrderUpdateDTO orderUpdateDTO){
+    public ResponseEntity<OrderViewDTO> updateOrder(@RequestBody @Valid OrderUpdateDTO orderUpdateDTO){
         OrderViewDTO updatedOrder = orderService.updateOrder(orderUpdateDTO);
         return new ResponseEntity<>(updatedOrder, HttpStatus.OK);
     }

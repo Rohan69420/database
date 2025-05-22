@@ -36,8 +36,8 @@ public class UserService {
         return userMapper.userToUserViewDTO(updatedUser);
     }
 
-    public void deleteUser(Integer userId) {
-        userRepository.deleteById(userId);
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
         log.info("A user has been deleted");
     }
 
