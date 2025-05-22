@@ -1,11 +1,25 @@
 package com.pgl1.database.model.entity;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Column;
+import jakarta.persistence.Table;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+
+import lombok.EqualsAndHashCode;
+import lombok.Builder;
+import lombok.Data;
+
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 
 @Entity
-@Table(name="Item")
+@Table(name="items")
 @Data
 @Builder
 @EqualsAndHashCode(exclude = "id")
@@ -28,4 +42,8 @@ public class Item {
 
     @Column(name="weight", nullable = false)
     private float weight;
+
+    @Column(name="created_timestamp")
+    @CreationTimestamp
+    private LocalDateTime createdTimestamp;
 }

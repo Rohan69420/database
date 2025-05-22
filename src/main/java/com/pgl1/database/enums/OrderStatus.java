@@ -1,4 +1,9 @@
 package com.pgl1.database.enums;
 
-public class OrderStatus {
+public enum OrderStatus {
+    PENDING,
+    PROCESSING,
+    SHIPPED,
+    DELIVERED,
+    CANCELLED
 }
