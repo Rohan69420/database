@@ -1,27 +1,37 @@
 package com.pgl1.database.service;
 
-import com.pgl1.database.model.entity.Location;
+import com.pgl1.database.dto.request.CreateLocationRequest;
+import com.pgl1.database.dto.request.UpdateLocationRequest;
+import com.pgl1.database.dto.response.ViewLocationResponse;
 import com.pgl1.database.repository.LocationRepository;
+import com.pgl1.database.mapper.LocationMapper;
+import com.pgl1.database.model.entity.Location;
+
 import org.springframework.stereotype.Service;
 
 @Service
 public class LocationService {
 
     private final LocationRepository locationRepository;
+    private final LocationMapper locationMapper;
 
-    public LocationService(LocationRepository locationRepository){
+    public LocationService(LocationRepository locationRepository, LocationMapper locationMapper){
         this.locationRepository = locationRepository;
+        this.locationMapper = locationMapper;
     }
 
-    public Location createLocation(Location location){
-        return locationRepository.save(location);
+    public ViewLocationResponse createLocation(CreateLocationRequest createLocationRequest){
+        Location createdLocation = locationRepository.save(locationMapper.locationCreateDTOToLocation(createLocationRequest));
+        return locationMapper.locationToLocationViewDTO(createdLocation);
     }
 
-    public Location updateLocation(Location location){
-        return locationRepository.save(location);
+    public ViewLocationResponse updateLocation(UpdateLocationRequest updateLocationRequest){
+        Location updatedLocation = locationRepository.save(locationMapper.locationUpdateDTOToLocation(updateLocationRequest));
+        return locationMapper.locationToLocationViewDTO(updatedLocation);
     }
 
-    public void deleteLocation(Integer locationId){
-        locationRepository.deleteById(locationId);
+
+    public void deleteLocation(Long id){
+        locationRepository.deleteById(id);
     }
 }

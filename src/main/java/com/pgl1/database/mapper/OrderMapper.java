@@ -1,26 +1,23 @@
 package com.pgl1.database.mapper;
 
-import com.pgl1.database.dto.request.order.OrderUpdateDTO;
-import com.pgl1.database.dto.request.order.OrderWriteDTO;
-import com.pgl1.database.dto.response.order.OrderReadDTO;
+import com.pgl1.database.dto.request.CreateOrderRequest;
+import com.pgl1.database.dto.request.UpdateOrderRequest;
+import com.pgl1.database.dto.response.ViewOrderResponse;
 import com.pgl1.database.model.entity.Order;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface OrderMapper {
-    @Mapping(target="orderId", ignore = true)
-    @Mapping(target="pickupPoint.pickupPointId", source = "pickupPointId")
-    @Mapping(target = "user.userId", source = "userId")
-    Order orderWriteDTOToOrder(OrderWriteDTO orderWriteDTO);
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdTimestamp", ignore = true)
+    Order orderCreateDTOToOrder(CreateOrderRequest createOrderRequest);
 
-    @Mapping(target="pickupPoint.pickupPointId", source = "pickupPointId")
-    @Mapping(target = "user.userId", source = "userId")
-    Order orderUpdateDTOToOrder(OrderUpdateDTO orderUpdateDTO);
+    @Mapping(target = "createdTimestamp", ignore = true)
+    Order orderUpdateDTOToOrder(UpdateOrderRequest updateOrderRequest);
 
-    @Mapping(target = "userId", source = "user.userId")
-    @Mapping(target = "pickupPointId", source = "pickupPoint.pickupPointId")
-    OrderReadDTO orderToOrderReadDTO(Order order);
+    ViewOrderResponse orderToOrderViewDTO(Order order);
 
 }
 
