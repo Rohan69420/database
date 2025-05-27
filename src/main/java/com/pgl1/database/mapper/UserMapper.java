@@ -1,12 +1,14 @@
 package com.pgl1.database.mapper;
 
-import com.pgl1.database.dto.request.UserUpdateDTO;
-import com.pgl1.database.dto.request.UserCreateDTO;
-import com.pgl1.database.dto.response.UserViewDTO;
+import com.pgl1.database.dto.request.UpdateUserRequest;
+import com.pgl1.database.dto.request.CreateUserRequest;
+import com.pgl1.database.dto.response.ViewUserResponse;
 import com.pgl1.database.model.entity.User;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {
@@ -14,12 +16,13 @@ public interface UserMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdTimestamp", ignore = true)
     @Mapping(target = "updatedTimestamp", ignore = true)
-    User userCreateDTOToUser(UserCreateDTO userCreateDTO);
+    User userCreateDTOToUser(CreateUserRequest createUserRequest);
 
     @Mapping(target = "createdTimestamp", ignore = true)
     @Mapping(target = "updatedTimestamp", ignore = true)
-    User userUpdateDTOtoUser(UserUpdateDTO userUpdateDTO);
+    User userUpdateDTOtoUser(UpdateUserRequest updateUserRequest);
 
+    List<ViewUserResponse> userListToDTOList(List<User> users);
 
-    UserViewDTO userToUserViewDTO(User user);
+    ViewUserResponse userToUserViewDTO(User user);
 }

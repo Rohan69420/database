@@ -9,13 +9,15 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Size;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.Data;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class UserUpdateDTO {
+@Builder
+public class UpdateUserRequest {
     @NotNull(message = "User id cannot be null")
     private Long id;
 

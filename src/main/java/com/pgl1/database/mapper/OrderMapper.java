@@ -1,8 +1,8 @@
 package com.pgl1.database.mapper;
 
-import com.pgl1.database.dto.request.OrderCreateDTO;
-import com.pgl1.database.dto.request.OrderUpdateDTO;
-import com.pgl1.database.dto.response.OrderViewDTO;
+import com.pgl1.database.dto.request.CreateOrderRequest;
+import com.pgl1.database.dto.request.UpdateOrderRequest;
+import com.pgl1.database.dto.response.ViewOrderResponse;
 import com.pgl1.database.model.entity.Order;
 
 import org.mapstruct.Mapper;
@@ -10,14 +10,14 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface OrderMapper {
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "createdTimestamp", ignore = true)
+    Order orderCreateDTOToOrder(CreateOrderRequest createOrderRequest);
 
     @Mapping(target = "createdTimestamp", ignore = true)
-    Order orderCreateDTOToOrder(OrderCreateDTO orderCreateDTO);
+    Order orderUpdateDTOToOrder(UpdateOrderRequest updateOrderRequest);
 
-    @Mapping(target = "createdTimestamp", ignore = true)
-    Order orderUpdateDTOToOrder(OrderUpdateDTO orderUpdateDTO);
-
-    OrderViewDTO orderToOrderViewDTO(Order order);
+    ViewOrderResponse orderToOrderViewDTO(Order order);
 
 }
 

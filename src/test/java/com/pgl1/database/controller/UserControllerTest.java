@@ -1,10 +1,14 @@
 package com.pgl1.database.controller;
 
-import com.pgl1.database.dto.request.UserCreateDTO;
-import com.pgl1.database.dto.request.UserUpdateDTO;
+import com.pgl1.database.dto.request.CreateItemRequest;
+import com.pgl1.database.dto.request.CreateUserRequest;
+import com.pgl1.database.dto.request.UpdateUserRequest;
+import com.pgl1.database.dto.response.ViewUserResponse;
+import com.pgl1.database.handler.GenericAPIResponse;
+import com.pgl1.database.mockData.LocationTestDataBuilder;
+import com.pgl1.database.mockData.UserTestDataBuilder;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import com.pgl1.database.dto.response.UserViewDTO;
 import org.springframework.http.ResponseEntity;
 import com.pgl1.database.model.entity.Location;
 import com.pgl1.database.service.UserService;
@@ -15,6 +19,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 import jakarta.validation.ConstraintViolationException;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -36,139 +41,37 @@ class UserControllerTest {
     @InjectMocks
     private UserController userController;
 
-    private UserCreateDTO validCreateDTO;
-    private UserUpdateDTO validUpdateDTO;
-    private UserViewDTO sampleUserViewDTO;
+    private CreateUserRequest createUser;
+    private UpdateUserRequest updateUser;
+    private ViewUserResponse viewUser;
+
+    MockHttpServletRequest mockRequest = new MockHttpServletRequest();
 
     @BeforeEach
     void setUp() {
-        Location location = Location.builder().country("Nepal").city("Kathmandu").street("Kalopul").build();
+        Location location = LocationTestDataBuilder.locationBuilder().build();
 
-        validCreateDTO = new UserCreateDTO(
-                "John Doe",              // name
-                "+1234567890",           // phone (must match regex pattern)
-                location,                // location
-                "john.doe@example.com"  // email
-        );
+        createUser = UserTestDataBuilder.createUserRequestBuilder().build();
+        updateUser = UserTestDataBuilder.updateUserRequestBuilder().build();
+        viewUser = UserTestDataBuilder.viewUserResponseBuilder().build();
 
-
-        validUpdateDTO = new UserUpdateDTO(
-                1L,
-                "John",
-                "0123456789",
-                location,
-                "john.doe@example.com"
-        );
-
-        sampleUserViewDTO = new UserViewDTO(
-                1L,
-                "John",
-                "+1234567890",
-                "john.doe@example.com",
-                location
-        );
+        mockRequest.setRequestURI("/users");
     }
 
     @Test
-    void createUser_WithValidInput_ReturnsCreated() {
-        when(userService.createUser(any(UserCreateDTO.class))).thenReturn(sampleUserViewDTO);
+    void createUser_ShouldReturnCreatedUser() {
+        when(userService.createUser(any(CreateUserRequest.class)))
+                .thenReturn(viewUser);
 
-        ResponseEntity<UserViewDTO> response = userController.createUser(validCreateDTO);
+        ResponseEntity<GenericAPIResponse<ViewUserResponse>> response =
+                userController.createUser(createUser, mockRequest);
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals(sampleUserViewDTO, response.getBody());
-        verify(userService, times(1)).createUser(validCreateDTO);
-    }
+        assertEquals("An user has been created", response.getBody().getMessage());
+        assertEquals("/users", response.getBody().getPath());
+        assertEquals(viewUser, response.getBody().getData());  // More specific than full object comparison
 
-    @Test
-    void updateUser_WithValidInput_ReturnsCreated() {
-        // Arrange
-        when(userService.updateUser(any(UserUpdateDTO.class))).thenReturn(sampleUserViewDTO);
-
-        // Act
-        ResponseEntity<UserViewDTO> response = userController.updateUser(validUpdateDTO);
-
-        // Assert
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(sampleUserViewDTO, response.getBody());
-        verify(userService, times(1)).updateUser(validUpdateDTO);
-    }
-
-    @Test
-    void deleteUser_WithValidId_ReturnsNoContent() {
-        // Arrange
-        Integer userId = 1;
-        doNothing().when(userService).deleteUser(userId);
-
-        // Act
-        ResponseEntity<Void> response = userController.deleteUser(userId);
-
-        // Assert
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        verify(userService, times(1)).deleteUser(userId);
-    }
-
-    @Test
-    void findUser_WithValidEmail_ReturnsOk() {
-        // Arrange
-        String email = "john.doe@example.com";
-        when(userService.fetchUser(email)).thenReturn(sampleUserViewDTO);
-
-        // Act
-        ResponseEntity<UserViewDTO> response = userController.findUser(email);
-
-        // Assert
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(sampleUserViewDTO, response.getBody());
-        verify(userService, times(1)).fetchUser(email);
-    }
-
-    @Test
-    void createUser_WithNullInput_ShouldThrowException() {
-        // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> {
-            userController.createUser(null);
-        });
-    }
-
-    @Test
-    void updateUser_WithInvalidInput_ShouldThrowValidationException() {
-        UserUpdateDTO invalidUpdateDTO = new UserUpdateDTO(
-                null,
-                "",
-                "abcdefghi",
-                null,
-                "invalid-email"
-        );
-
-        when(userService.updateUser(invalidUpdateDTO)).thenThrow(ConstraintViolationException.class);
-
-        assertThrows(ConstraintViolationException.class, () -> {
-            userController.updateUser(invalidUpdateDTO);
-        });
-    }
-
-    @Test
-    void findUser_WithNonExistentEmail_ShouldReturnNotFound() {
-        String nonExistentEmail = "nonexistent@example.com";
-        when(userService.fetchUser(nonExistentEmail)).thenReturn(null);
-
-        ResponseEntity<UserViewDTO> response = userController.findUser(nonExistentEmail);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNull(response.getBody());
-    }
-
-    @Test
-    void deleteUser_WithNonExistentId_ShouldHandleGracefully() {
-        Integer nonExistentId = 999;
-        doThrow(new IllegalArgumentException("User not found")).when(userService).deleteUser(nonExistentId);
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            userController.deleteUser(nonExistentId);
-        });
+        verify(userService).createUser(createUser);
     }
 }

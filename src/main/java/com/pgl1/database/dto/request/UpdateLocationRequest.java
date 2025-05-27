@@ -1,17 +1,18 @@
 package com.pgl1.database.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
+@Builder
 
-public class LocationUpdateDTO {
+public class UpdateLocationRequest {
     @NotNull(message = "The location id cannot be null")
     private Long id;
 

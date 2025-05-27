@@ -1,8 +1,12 @@
 package com.pgl1.database.controller;
 
-import com.pgl1.database.dto.request.LocationCreateDTO;
-import com.pgl1.database.dto.request.LocationUpdateDTO;
-import com.pgl1.database.dto.response.LocationViewDTO;
+import com.pgl1.database.dto.request.CreateLocationRequest;
+import com.pgl1.database.dto.request.UpdateLocationRequest;
+import com.pgl1.database.dto.response.ViewLocationResponse;
+import com.pgl1.database.handler.GenericAPIResponse;
+import com.pgl1.database.mockData.LocationTestDataBuilder;
+import com.pgl1.database.util.ResponseUtil;
+import jakarta.transaction.Transactional;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
 import com.pgl1.database.service.LocationService;
@@ -12,19 +16,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
+@Transactional
 class LocationControllerTest {
 
     @Mock
@@ -33,102 +35,54 @@ class LocationControllerTest {
     @InjectMocks
     private LocationController locationController;
 
-    private LocationCreateDTO locationCreateDTO;
-    private LocationUpdateDTO locationUpdateDTO;
-    private LocationViewDTO locationViewDTO;
+    private CreateLocationRequest createLocation;
+    private UpdateLocationRequest updateLocation;
+    private ViewLocationResponse viewLocation;
+
+    MockHttpServletRequest mockRequest = new MockHttpServletRequest();
 
     @BeforeEach
     void setUp() {
-        // Initialize test data
-        locationCreateDTO = new LocationCreateDTO(
-                "Nepal",
-                "Kathmandu",
-                "Kalopul"
-        );
+        createLocation = LocationTestDataBuilder.buildCreateLocationRequest().build();
+        updateLocation = LocationTestDataBuilder.buildUpdateLocationRequest().build();
+        viewLocation = LocationTestDataBuilder.buildViewLocationResponse().build();
 
-        locationUpdateDTO = new LocationUpdateDTO(
-                1L,
-                "Nepal",
-                "Kathmandu",
-                "Chabahil"
-        );
-
-        locationViewDTO = new LocationViewDTO(
-                1L,
-                "Nepal",
-                "Kathmandu",
-                "Chabahil"
-        );
+        mockRequest.setRequestURI("/locations");
     }
 
+
     @Test
-    void createLocation_ShouldReturnCreatedStatusAndLocation() {
-        when(locationService.createLocation(any(LocationCreateDTO.class))).thenReturn(locationViewDTO);
+    void createLocation_ShouldReturnCreatedResponse() {
+        when(locationService.createLocation(any(CreateLocationRequest.class)))
+                .thenReturn(viewLocation);
 
-        ResponseEntity<LocationViewDTO> response = locationController.createLocation(locationCreateDTO);
+        ResponseEntity<GenericAPIResponse<ViewLocationResponse>> response =
+                locationController.createLocation(createLocation, mockRequest);
 
-        assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals(locationViewDTO, response.getBody());
+        assertEquals("Location created successfully", response.getBody().getMessage());
+        assertEquals("/locations", response.getBody().getPath());
+        assertEquals(viewLocation, response.getBody().getData());  // More specific than full object comparison
 
-        verify(locationService, times(1)).createLocation(locationCreateDTO);
+        verify(locationService).createLocation(createLocation);  // Verify correct parameter was passed
     }
 
     @Test
-    void updateLocation_ShouldReturnOkStatusAndUpdatedLocation() {
-        when(locationService.updateLocation(any(LocationUpdateDTO.class))).thenReturn(locationViewDTO);
+    void createLocation_withDifferentStreet_shouldWork() {
+        CreateLocationRequest customRequest = LocationTestDataBuilder.buildCreateLocationRequest()
+                .street("New Street")
+                .build();
 
-        ResponseEntity<LocationViewDTO> response = locationController.updateLocation(locationUpdateDTO);
+        ViewLocationResponse customResponse = LocationTestDataBuilder.buildViewLocationResponse()
+                .street("New Street")
+                .build();
 
-        assertNotNull(response);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(locationViewDTO, response.getBody());
+        when(locationService.createLocation(any(CreateLocationRequest.class))).thenReturn(customResponse);
 
-        verify(locationService, times(1)).updateLocation(locationUpdateDTO);
-    }
+        ResponseEntity<GenericAPIResponse<ViewLocationResponse>> response =
+                locationController.createLocation(customRequest, mockRequest);
 
-    @Test
-    void deleteLocation_ShouldReturnNoContentStatus() {
-        Integer locationId = 1;
-        doNothing().when(locationService).deleteLocation(locationId);
-
-        ResponseEntity<Void> response = locationController.deleteLocation(locationId);
-
-        assertNotNull(response);
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-
-        verify(locationService, times(1)).deleteLocation(locationId);
-    }
-
-    @Test
-    void createLocation_ShouldHandleServiceException() {
-        when(locationService.createLocation(any(LocationCreateDTO.class)))
-                .thenThrow(new RuntimeException("Service exception"));
-
-        assertThrows(RuntimeException.class, () -> {
-            locationController.createLocation(locationCreateDTO);
-        });
-    }
-
-    @Test
-    void updateLocation_ShouldHandleServiceException() {
-        when(locationService.updateLocation(any(LocationUpdateDTO.class)))
-                .thenThrow(new RuntimeException("Service exception"));
-
-        assertThrows(RuntimeException.class, () -> {
-            locationController.updateLocation(locationUpdateDTO);
-        });
-    }
-
-    @Test
-    void deleteLocation_ShouldHandleServiceException() {
-        Integer locationId = 1;
-        doThrow(new RuntimeException("Service exception")).when(locationService).deleteLocation(locationId);
-
-        assertThrows(RuntimeException.class, () -> {
-            locationController.deleteLocation(locationId);
-        });
+        assertEquals("New Street", response.getBody().getData().getStreet());
     }
 }

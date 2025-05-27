@@ -1,11 +1,12 @@
-package com.pgl1.database.dto.request;
+package com.pgl1.database.dto.response;
 
 import com.pgl1.database.model.entity.PickupPoint;
+import com.pgl1.database.enums.OrderStatus;
 import com.pgl1.database.model.entity.Item;
 import com.pgl1.database.model.entity.User;
-import com.pgl1.database.enums.OrderStatus;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.Data;
 
@@ -14,7 +15,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class OrderUpdateDTO {
+@Builder
+
+public class ViewOrderResponse {
     private Long id;
     private String name;
     private List<Item> items;

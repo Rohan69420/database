@@ -1,9 +1,9 @@
 package com.pgl1.database.service;
 
-import com.pgl1.database.dto.request.ItemUpdateDTO;
-import com.pgl1.database.dto.request.ItemCreateDTO;
+import com.pgl1.database.dto.request.UpdateItemRequest;
+import com.pgl1.database.dto.request.CreateItemRequest;
 import com.pgl1.database.repository.ItemRepository;
-import com.pgl1.database.dto.response.ItemViewDTO;
+import com.pgl1.database.dto.response.ViewItemResponse;
 import com.pgl1.database.mapper.ItemMapper;
 import com.pgl1.database.model.entity.Item;
 
@@ -19,13 +19,13 @@ public class ItemService {
         this.itemMapper = itemMapper;
     }
 
-    public ItemViewDTO createItem(ItemCreateDTO itemCreateDTO){
-        Item createdItem =  itemRepository.save(itemMapper.itemWriteDTOToItem(itemCreateDTO));
+    public ViewItemResponse createItem(CreateItemRequest createItemRequest){
+        Item createdItem =  itemRepository.save(itemMapper.itemWriteDTOToItem(createItemRequest));
         return itemMapper.itemToItemViewDTO(createdItem);
     }
 
-    public ItemViewDTO updateItem(ItemUpdateDTO itemUpdateDTO){
-        Item updatedItem =  itemRepository.save(itemMapper.itemUpdateDTOToItem(itemUpdateDTO));
+    public ViewItemResponse updateItem(UpdateItemRequest updateItemRequest){
+        Item updatedItem =  itemRepository.save(itemMapper.itemUpdateDTOToItem(updateItemRequest));
         return itemMapper.itemToItemViewDTO(updatedItem);
     }
 

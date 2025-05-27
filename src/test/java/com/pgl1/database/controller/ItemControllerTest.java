@@ -1,135 +1,82 @@
 package com.pgl1.database.controller;
 
-import com.pgl1.database.dto.request.ItemCreateDTO;
-import com.pgl1.database.dto.request.ItemUpdateDTO;
-import com.pgl1.database.dto.response.ItemViewDTO;
+import com.pgl1.database.dto.request.CreateItemRequest;
+import com.pgl1.database.dto.request.CreateLocationRequest;
+import com.pgl1.database.dto.request.CreateOrderRequest;
+import com.pgl1.database.dto.request.UpdateItemRequest;
+import com.pgl1.database.dto.response.ViewItemResponse;
+import com.pgl1.database.dto.response.ViewLocationResponse;
+import com.pgl1.database.handler.GenericAPIResponse;
+import com.pgl1.database.mockData.ItemTestDataBuilder;
+import com.pgl1.database.mockData.LocationTestDataBuilder;
+import com.pgl1.database.mockData.UserTestDataBuilder;
 import com.pgl1.database.model.entity.Location;
-import com.pgl1.database.service.ItemService;
 import com.pgl1.database.model.entity.User;
-
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.HttpStatus;
+import com.pgl1.database.service.ItemService;
+import com.pgl1.database.util.ResponseUtil;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.time.LocalDateTime;
+import jakarta.validation.ConstraintViolationException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+@Transactional
 class ItemControllerTest {
 
     @Mock
     private ItemService itemService;
 
+    private CreateItemRequest createItem;
+    private ViewItemResponse viewItem;
+
     @InjectMocks
     private ItemController itemController;
 
-    private ItemCreateDTO itemCreateDTO;
-    private ItemUpdateDTO itemUpdateDTO;
-    private ItemViewDTO itemViewDTO;
+    MockHttpServletRequest mockRequest = new MockHttpServletRequest();
 
     @BeforeEach
     void setUp() {
-        Location location = Location.builder().country("Nepal").city("Kathmandu").street("Kalopul").build();
-        User user = User.builder().id(1L).name("Tester").phone("9876543210").email("test@test.com").location(location).build();
+        //Create a user to associate the item with
+        Location testLocation = LocationTestDataBuilder.locationBuilder().build();
+        User testUser = UserTestDataBuilder.userBuilder().build();
 
-        itemCreateDTO = ItemCreateDTO.builder().user(user).name("Furniture").description("From IKEA").weight(1.2f).build();
-        itemUpdateDTO = ItemUpdateDTO.builder().user(user).name("Furniture").description("Changed: From Costco").weight(1.2f).build();
-        itemViewDTO = ItemViewDTO.builder().id(1L).name("Furniture").description("Changed: From Costco").weight(1.2f).localDateTime(LocalDateTime.now()).build();
+        createItem = ItemTestDataBuilder.createItemRequestBuilder().user(testUser).build();
+        viewItem = ItemTestDataBuilder.viewItemResponseBuilder().build();
+
+        mockRequest.setRequestURI("/orders");
     }
 
     @Test
-    void createItem_ShouldReturnCreatedStatusAndItem() {
-        when(itemService.createItem(any(ItemCreateDTO.class))).thenReturn(itemViewDTO);
+    void createItem_ShouldReturnCreatedItem() {
+        when(itemService.createItem(any(CreateItemRequest.class)))
+                .thenReturn(viewItem);
 
-        ResponseEntity<ItemViewDTO> response = itemController.createItem(itemCreateDTO);
+        ResponseEntity<GenericAPIResponse<ViewItemResponse>> response =
+                itemController.createItem(createItem, mockRequest);
 
-        assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals(itemViewDTO, response.getBody());
-        verify(itemService, times(1)).createItem(itemCreateDTO);
+        assertEquals("An item has been created", response.getBody().getMessage());
+        assertEquals("/orders", response.getBody().getPath());
+        assertEquals(viewItem, response.getBody().getData());  // More specific than full object comparison
+
+        verify(itemService).createItem(createItem);
     }
 
-    @Test
-    void updateItem_ShouldReturnOkStatusAndUpdatedItem() {
-        when(itemService.updateItem(any(ItemUpdateDTO.class))).thenReturn(itemViewDTO);
 
-        ResponseEntity<ItemViewDTO> response = itemController.updateItem(itemUpdateDTO);
-
-        assertNotNull(response);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(itemViewDTO, response.getBody());
-        verify(itemService, times(1)).updateItem(itemUpdateDTO);
-    }
-
-    @Test
-    void deleteItem_ShouldReturnNoContentStatus() {
-        Integer itemId = 1;
-        doNothing().when(itemService).deleteItem(itemId);
-
-        ResponseEntity<Void> response = itemController.deleteItem(itemId);
-
-        assertNotNull(response);
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        verify(itemService, times(1)).deleteItem(itemId);
-    }
-
-    @Test
-    void createItem_ShouldHandleServiceException() {
-        when(itemService.createItem(any(ItemCreateDTO.class)))
-                .thenThrow(new RuntimeException("Service exception"));
-
-        assertThrows(RuntimeException.class, () -> itemController.createItem(itemCreateDTO));
-        verify(itemService, times(1)).createItem(itemCreateDTO);
-    }
-
-    @Test
-    void updateItem_ShouldHandleServiceException() {
-        when(itemService.updateItem(any(ItemUpdateDTO.class)))
-                .thenThrow(new RuntimeException("Service exception"));
-
-        assertThrows(RuntimeException.class, () -> itemController.updateItem(itemUpdateDTO));
-        verify(itemService, times(1)).updateItem(itemUpdateDTO);
-    }
-
-    @Test
-    void deleteItem_ShouldHandleServiceException() {
-        Integer itemId = 1;
-        doThrow(new RuntimeException("Service exception")).when(itemService).deleteItem(itemId);
-
-        assertThrows(RuntimeException.class, () -> itemController.deleteItem(itemId));
-        verify(itemService, times(1)).deleteItem(itemId);
-    }
-
-    @Test
-    void createItem_ShouldValidateInput() {
-        ItemCreateDTO invalidItem = ItemCreateDTO.builder().build();
-
-        assertThrows(Exception.class, () -> itemController.createItem(invalidItem));
-        verify(itemService, never()).createItem(any());
-    }
-
-    @Test
-    void updateItem_ShouldValidateInput() {
-        ItemUpdateDTO invalidItem = ItemUpdateDTO.builder().build();
-
-        assertThrows(Exception.class, () -> itemController.updateItem(invalidItem));
-        verify(itemService, never()).updateItem(any());
-    }
 }

@@ -11,6 +11,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.Data;
 
@@ -19,10 +20,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-public class OrderCreateDTO {
-    private Long id;
+@Builder
 
-    // User Id can be excluded because in scenarios we might need it, it will be taking from the active session
+public class CreateOrderRequest {
     @NotBlank(message = "Please specify an order name")
     @Size(max=20, message="Order name should be shorter than 20 characters")
     private String name;

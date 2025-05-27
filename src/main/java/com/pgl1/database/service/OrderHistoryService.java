@@ -1,6 +1,7 @@
 package com.pgl1.database.service;
 
 import com.pgl1.database.enums.ChangeType;
+import com.pgl1.database.enums.OrderStatus;
 import com.pgl1.database.model.entity.Order;
 import com.pgl1.database.model.entity.OrderHistory;
 import com.pgl1.database.repository.OrderHistoryRepository;
@@ -10,7 +11,12 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -58,5 +64,17 @@ public class OrderHistoryService {
             log.info("Recorded order update for order ID: {}", newState.getId());
         }
 
+    }
+
+    public List<OrderHistory> fetchOrderHistoryByOrderId(Long orderId, Integer page){
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+        Pageable pageable = PageRequest.of(page,10,sort);
+        return orderHistoryRepository.findByOrderId(orderId, pageable).getContent();
+    }
+
+    public List<OrderHistory> fetchOrderHistoryByOrderIdAndStatus(Long orderId, OrderStatus status){
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+        Pageable pageable = PageRequest.of(0,10,sort);
+        return orderHistoryRepository.findByOrderIdAndNewStatus(orderId, status, pageable).getContent();
     }
 }

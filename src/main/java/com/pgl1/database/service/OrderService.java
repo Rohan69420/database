@@ -1,9 +1,9 @@
 package com.pgl1.database.service;
 
-import com.pgl1.database.dto.request.OrderCreateDTO;
-import com.pgl1.database.dto.request.OrderUpdateDTO;
+import com.pgl1.database.dto.request.CreateOrderRequest;
+import com.pgl1.database.dto.request.UpdateOrderRequest;
+import com.pgl1.database.dto.response.ViewOrderResponse;
 import com.pgl1.database.repository.OrderRepository;
-import com.pgl1.database.dto.response.OrderViewDTO;
 import com.pgl1.database.mapper.OrderMapper;
 import com.pgl1.database.model.entity.Order;
 
@@ -26,18 +26,18 @@ public class OrderService {
         this.orderMapper = orderMapper;
     }
 
-    public OrderViewDTO createOrder(OrderCreateDTO orderCreateDTO){
-        Order savedOrder =  orderRepository.save(orderMapper.orderCreateDTOToOrder(orderCreateDTO));
+    public ViewOrderResponse createOrder(CreateOrderRequest createOrderRequest){
+        Order savedOrder =  orderRepository.save(orderMapper.orderCreateDTOToOrder(createOrderRequest));
         log.info("An order has been created");
         orderHistoryService.recordOrderCreation(savedOrder);
        return orderMapper.orderToOrderViewDTO(savedOrder);
     }
 
-    public OrderViewDTO updateOrder(OrderUpdateDTO orderUpdateDTO){
-        Order existingOrder = orderRepository.findById(orderUpdateDTO.getId()).orElse(null);
+    public ViewOrderResponse updateOrder(UpdateOrderRequest updateOrderRequest){
+        Order existingOrder = orderRepository.findById(updateOrderRequest.getId()).orElse(null);
         Order previousState = new Order();
         BeanUtils.copyProperties(existingOrder, previousState);
-        Order updatedOrder = orderRepository.save(orderMapper.orderUpdateDTOToOrder(orderUpdateDTO));
+        Order updatedOrder = orderRepository.save(orderMapper.orderUpdateDTOToOrder(updateOrderRequest));
 
         log.info("An order has been updated");
         orderHistoryService.recordOrderUpdate(previousState, updatedOrder);

@@ -50,11 +50,11 @@ public class Order {
     @JoinColumn(name="user_id", nullable=false)
     private User user;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name="source_pickup_id")
     private PickupPoint source;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name="destination_pickup_id")
     private PickupPoint destination;
 

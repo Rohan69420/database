@@ -1,5 +1,10 @@
 package com.pgl1.database.advice;
 
+import com.pgl1.database.custom.exception.ResourceNotFoundException;
+import com.pgl1.database.custom.exception.ResponseNotFoundException;
+import com.pgl1.database.handler.GenericAPIResponse;
+import com.pgl1.database.util.ResponseUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -8,35 +13,28 @@ import org.springframework.validation.FieldError;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 @Slf4j
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalControllerAdvice {
-    @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
-    public ResponseEntity<String> handleSQLRelatedExceptions(SQLIntegrityConstraintViolationException sqlIntegrityConstraintViolationException){
-        log.error("SQL exception triggered", sqlIntegrityConstraintViolationException);
-        return new ResponseEntity<>("There is an issue with the SQL side of things. Double check your primary and foreign key constraints.", HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(Exception.class)
+    public GenericAPIResponse<Object> handleGeneralException(Exception ex, HttpServletRequest request){
+        return ResponseUtil.error(Arrays.asList(ex.getMessage()), "An unexpected error occured", 1001, request.getRequestURI());
     }
 
-    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<String> handleUnsupportedMethodExceptions(HttpRequestMethodNotSupportedException httpRequestMethodNotSupportedException){
-        log.error("Unsupported HTTP request triggered",  httpRequestMethodNotSupportedException);
-        return new ResponseEntity<>("This method is not supported, try making a request with a different method", HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public GenericAPIResponse<Object> handleResourceNotFoundException(Exception ex, HttpServletRequest request) {
+        return ResponseUtil.error(Arrays.asList(ex.getMessage()),"Resource not found", 404, request.getRequestURI());
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        log.error("Validation errors: {}", errors);
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(ResponseNotFoundException.class)
+    public GenericAPIResponse<Object> handleResponseNotFoundException(Exception ex, HttpServletRequest request) {
+        return ResponseUtil.error(Arrays.asList(ex.getMessage()), "Response data not found", 204, request.getRequestURI());
     }
 }

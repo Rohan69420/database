@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class PickupPointCreateDTO {
+public class CreatePickupPointRequest {
     @NotBlank(message = "Name cannot be blank")
     @Size(min = 2, max = 20, message = "Name must be in-between 2 and 20 characters")
     private String name;

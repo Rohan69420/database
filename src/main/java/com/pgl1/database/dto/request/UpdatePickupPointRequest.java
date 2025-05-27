@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class PickupPointUpdateDTO {
+public class UpdatePickupPointRequest {
     @NotNull(message = "There must be an id associated with the pickup point")
     private Long id;
 

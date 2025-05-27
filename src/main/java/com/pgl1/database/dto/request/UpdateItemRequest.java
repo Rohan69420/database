@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ItemUpdateDTO {
+public class UpdateItemRequest {
     @NotNull(message = "Item id cannot be null")
     private Long id;
 

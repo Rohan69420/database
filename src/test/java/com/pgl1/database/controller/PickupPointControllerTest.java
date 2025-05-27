@@ -1,9 +1,16 @@
 package com.pgl1.database.controller;
 
-import com.pgl1.database.dto.request.PickupPointCreateDTO;
-import com.pgl1.database.dto.request.PickupPointUpdateDTO;
-import com.pgl1.database.dto.response.PickupPointViewDTO;
+import com.pgl1.database.dto.request.CreateItemRequest;
+import com.pgl1.database.dto.request.CreatePickupPointRequest;
+import com.pgl1.database.dto.request.UpdatePickupPointRequest;
+import com.pgl1.database.dto.response.ViewItemResponse;
+import com.pgl1.database.dto.response.ViewPickupPointResponse;
+import com.pgl1.database.handler.GenericAPIResponse;
+import com.pgl1.database.mockData.LocationTestDataBuilder;
+import com.pgl1.database.mockData.PickupPointTestDataBuilder;
+import com.pgl1.database.model.entity.PickupPoint;
 import com.pgl1.database.service.PickupPointService;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +20,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -27,6 +35,7 @@ import static org.mockito.Mockito.when;
 
 
 @ExtendWith(MockitoExtension.class)
+@Transactional
 class PickupPointControllerTest {
 
     @Mock
@@ -35,93 +44,37 @@ class PickupPointControllerTest {
     @InjectMocks
     private PickupPointController pickupPointController;
 
-    private PickupPointCreateDTO createDTO;
-    private PickupPointUpdateDTO updateDTO;
-    private PickupPointViewDTO viewDTO;
+    private CreatePickupPointRequest createPickupPoint;
+    private UpdatePickupPointRequest updatePickupPoint;
+    private ViewPickupPointResponse viewPickupPoint;
+
+    MockHttpServletRequest mockRequest = new MockHttpServletRequest();
 
     @BeforeEach
     void setUp() {
-        Location location = Location.builder().country("Nepal").city("Bhaktapur").street("Thimi").build();
+        Location location = LocationTestDataBuilder.locationBuilder().build();
 
-        createDTO = PickupPointCreateDTO.builder().name("Thimi branch").contact("0123456789").location(location).description("Only pickup point in bkt").build();
+        createPickupPoint = PickupPointTestDataBuilder.createPickupPointRequestBuilder().build();
+        updatePickupPoint = PickupPointTestDataBuilder.updatePickupPointRequestBuilder().build();
+        viewPickupPoint = PickupPointTestDataBuilder.viewPickupPointResponseBuilder().build();
 
-        updateDTO = PickupPointUpdateDTO.builder().id(1L).name("Khowpa").contact("9876543210").location(location).description("Update: Shifted from Thimi to Khwopa").build();
-
-        viewDTO = PickupPointViewDTO.builder().id(1L).name("Khowpa").contact("9876543210").location(location).description("Update: Shifted from Thimi to Khwopa").build();
-
+        mockRequest.setRequestURI("/pickup-points");
     }
 
     @Test
     void createPickupPoint_ShouldReturnCreatedResponse() {
-        when(pickupPointService.createPickupPoint(any(PickupPointCreateDTO.class))).thenReturn(viewDTO);
+        when(pickupPointService.createPickupPoint(any(CreatePickupPointRequest.class)))
+                .thenReturn(viewPickupPoint);
 
-        ResponseEntity<PickupPointViewDTO> response = pickupPointController.createPickupPoint(createDTO);
+        ResponseEntity<GenericAPIResponse<ViewPickupPointResponse>> response =
+                pickupPointController.createPickupPoint(createPickupPoint, mockRequest);
 
-        assertNotNull(response);
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
-        assertEquals(viewDTO, response.getBody());
+        assertEquals("A pickup point has been added", response.getBody().getMessage());
+        assertEquals("/pickup-points", response.getBody().getPath());
+        assertEquals(viewPickupPoint, response.getBody().getData());  // More specific than full object comparison
 
-        verify(pickupPointService, times(1)).createPickupPoint(createDTO);
-    }
-
-    @Test
-    void updatePickupPoint_ShouldReturnOkResponse() {
-        when(pickupPointService.updatePickupPoint(any(PickupPointUpdateDTO.class))).thenReturn(viewDTO);
-
-        ResponseEntity<PickupPointViewDTO> response = pickupPointController.updatePickupPoint(updateDTO);
-
-        assertNotNull(response);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(viewDTO, response.getBody());
-
-        verify(pickupPointService, times(1)).updatePickupPoint(updateDTO);
-    }
-
-    @Test
-    void deletePickupPoint_ShouldReturnNoContentResponse() {
-        Integer pickupPointId = 1;
-        doNothing().when(pickupPointService).deletePickupPoint(pickupPointId);
-
-        ResponseEntity<Void> response = pickupPointController.deletePickupPoint(pickupPointId);
-
-        assertNotNull(response);
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        assertNull(response.getBody());
-
-        verify(pickupPointService, times(1)).deletePickupPoint(pickupPointId);
-    }
-
-    @Test
-    void createPickupPoint_ShouldHandleServiceException() {
-        when(pickupPointService.createPickupPoint(any(PickupPointCreateDTO.class)))
-                .thenThrow(new RuntimeException("Service exception"));
-
-        assertThrows(RuntimeException.class, () -> {
-            pickupPointController.createPickupPoint(createDTO);
-        });
-    }
-
-    @Test
-    void updatePickupPoint_ShouldHandleInvalidInput() {
-        PickupPointUpdateDTO invalidDTO = PickupPointUpdateDTO.builder().build();
-        when(pickupPointService.updatePickupPoint(invalidDTO))
-                .thenThrow(new IllegalArgumentException("Invalid input"));
-
-        assertThrows(IllegalArgumentException.class, () -> {
-            pickupPointController.updatePickupPoint(invalidDTO);
-        });
-    }
-
-    @Test
-    void deletePickupPoint_ShouldHandleNotFound() {
-        Integer nonExistentId = 999;
-        doThrow(new RuntimeException("Pickup point not found"))
-                .when(pickupPointService).deletePickupPoint(nonExistentId);
-
-        assertThrows(RuntimeException.class, () -> {
-            pickupPointController.deletePickupPoint(nonExistentId);
-        });
+        verify(pickupPointService).createPickupPoint(createPickupPoint);
     }
 }

@@ -1,8 +1,8 @@
 package com.pgl1.database.mapper;
 
-import com.pgl1.database.dto.request.ItemUpdateDTO;
-import com.pgl1.database.dto.request.ItemCreateDTO;
-import com.pgl1.database.dto.response.ItemViewDTO;
+import com.pgl1.database.dto.request.UpdateItemRequest;
+import com.pgl1.database.dto.request.CreateItemRequest;
+import com.pgl1.database.dto.response.ViewItemResponse;
 import com.pgl1.database.model.entity.Item;
 
 import org.mapstruct.Mapper;
@@ -13,11 +13,11 @@ public interface ItemMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdTimestamp", ignore = true)
-    Item itemWriteDTOToItem(ItemCreateDTO itemCreateDTO);
+    Item itemWriteDTOToItem(CreateItemRequest createItemRequest);
 
 
     @Mapping(target = "createdTimestamp", ignore = true)
-    Item itemUpdateDTOToItem(ItemUpdateDTO itemUpdateDTO);
+    Item itemUpdateDTOToItem(UpdateItemRequest updateItemRequest);
 
-    ItemViewDTO itemToItemViewDTO(Item item);
+    ViewItemResponse itemToItemViewDTO(Item item);
 }

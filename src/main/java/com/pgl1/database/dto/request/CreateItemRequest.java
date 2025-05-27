@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ItemCreateDTO {
+public class CreateItemRequest {
     @NotNull(message = "User cannot be null")
     private User user;
 

@@ -1,19 +1,23 @@
 package com.pgl1.database.mapper;
 
-import com.pgl1.database.dto.request.PickupPointCreateDTO;
-import com.pgl1.database.dto.request.PickupPointUpdateDTO;
-import com.pgl1.database.dto.response.PickupPointViewDTO;
+import com.pgl1.database.dto.request.CreatePickupPointRequest;
+import com.pgl1.database.dto.request.UpdatePickupPointRequest;
+import com.pgl1.database.dto.response.ViewPickupPointResponse;
 import com.pgl1.database.model.entity.PickupPoint;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring")
 public interface PickupPointMapper {
     @Mapping(target = "id", ignore = true)
-    PickupPoint pickupPointCreateDTOToPickupPoint(PickupPointCreateDTO pickupPointCreateDTO);
+    PickupPoint pickupPointCreateDTOToPickupPoint(CreatePickupPointRequest createPickupPointRequest);
 
-    PickupPoint pickupPointUpdateDTOToPickupPoint(PickupPointUpdateDTO pickupPointUpdateDTO);
+    PickupPoint pickupPointUpdateDTOToPickupPoint(UpdatePickupPointRequest updatePickupPointRequest);
 
-    PickupPointViewDTO pickupPointToPickupPointViewDTO(PickupPoint pickupPoint);
+    List<ViewPickupPointResponse> pickupPointListToViewPickupPointResponseList(List<PickupPoint> pickupPoints);
+
+    ViewPickupPointResponse pickupPointToPickupPointViewDTO(PickupPoint pickupPoint);
 }
