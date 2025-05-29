@@ -1,12 +1,12 @@
 spring:
   application:
     name: database
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          issuer-uri: https://dev-6gonohusakhjykxh.us.auth0.com/
-          audiences: https://dev-6gonohusakhjykxh.us.auth0.com/api/v2/
+#  security:
+#    oauth2:
+#      resourceserver:
+#        jwt:
+#          issuer-uri: https://dev-6gonohusakhjykxh.us.auth0.com/
+#          audiences: https://dev-6gonohusakhjykxh.us.auth0.com/api/v2/
   datasource:
     url: jdbc:mysql://localhost:3306/testingDB
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -23,5 +23,5 @@ logging:
     path: "."
     name: "application.log"
   level:
-    root: INFO
+    root: DEBUG
 #profiling

@@ -9,6 +9,8 @@ import com.pgl1.database.model.entity.Location;
 
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class LocationService {
 
@@ -28,6 +30,11 @@ public class LocationService {
     public ViewLocationResponse updateLocation(UpdateLocationRequest updateLocationRequest){
         Location updatedLocation = locationRepository.save(locationMapper.locationUpdateDTOToLocation(updateLocationRequest));
         return locationMapper.locationToLocationViewDTO(updatedLocation);
+    }
+
+    public List<ViewLocationResponse> fetchAll(){
+        List<Location> locationList = locationRepository.findAll();
+        return locationMapper.locationListToViewLocationResponseList(locationList);
     }
 
 

@@ -70,9 +70,9 @@ class LocationControllerTest {
         assertNotNull(response.getBody());
         assertEquals("Location created successfully", response.getBody().getMessage());
         assertEquals("/locations", response.getBody().getPath());
-        assertEquals(viewLocation, response.getBody().getData());  // More specific than full object comparison
+        assertEquals(viewLocation, response.getBody().getData());
 
-        verify(locationService).createLocation(createLocation);  // Verify correct parameter was passed
+        verify(locationService).createLocation(createLocation);
     }
 
     @Test

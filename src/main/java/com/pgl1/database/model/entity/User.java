@@ -23,6 +23,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name="users")
@@ -42,6 +43,17 @@ public class User {
     @Size(min = 4, max = 12, message="Your name must be between 4 to 12")
     @Column(name="name", length = 20, nullable = false)
     private String name;
+
+    @NotBlank
+    @Column(name="username", nullable = false)
+    private String username;
+
+    @NotBlank
+    @Column(name = "password", nullable = false)
+    private String password;
+
+    @Column(name = "roles", nullable = true)
+    private List<String> roles;
 
     @NotBlank(message = "You're trying to write an empty phone number")
     @Pattern(regexp = "^\\+?[0-9\\s\\-()]{7,20}$", message = "Invalid phone number format")

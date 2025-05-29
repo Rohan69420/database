@@ -14,6 +14,8 @@ import lombok.Data;
 public class ViewUserResponse {
     private Long id;
     private String name;
+    private String username;
+    private String password;
     private String phone;
     private String email;
     private Location location;

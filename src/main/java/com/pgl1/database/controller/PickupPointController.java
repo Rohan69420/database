@@ -9,6 +9,8 @@ import com.pgl1.database.util.ResponseUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,6 +55,7 @@ public class PickupPointController {
 
     @GetMapping
     public ResponseEntity<GenericAPIResponse<List<ViewPickupPointResponse>>> getAllPickupPoints(HttpServletRequest request){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         List<ViewPickupPointResponse> pickupPointResponses = pickupPointService.fetchAll();
         return new ResponseEntity<>(ResponseUtil.success(pickupPointResponses, "All pickup points fetched.", request.getRequestURI()),HttpStatus.OK);
     }

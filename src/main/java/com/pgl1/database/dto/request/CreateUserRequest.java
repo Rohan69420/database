@@ -11,6 +11,8 @@ import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.Data;
 
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -19,6 +21,14 @@ import lombok.Data;
 public class CreateUserRequest {
     @NotBlank(message="Name cannot be empty")
     private String name;
+
+    @NotBlank
+    private String username;
+
+    @NotBlank
+    private String password;
+
+    private List<String> roles;
 
     @NotBlank(message="Phone number cannot be empty")
     @Pattern(regexp = "^\\+?[0-9\\s\\-()]{7,20}$", message = "Invalid phone number format")

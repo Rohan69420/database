@@ -12,8 +12,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -22,6 +25,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public UserService(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
@@ -29,6 +33,8 @@ public class UserService {
     }
 
     public ViewUserResponse createUser(CreateUserRequest createUserRequest) {
+        createUserRequest.setPassword(passwordEncoder.encode(createUserRequest.getPassword()));
+        createUserRequest.setRoles(Arrays.asList("USER"));
         User savedUser =  userRepository.save(userMapper.userCreateDTOToUser(createUserRequest));
         log.info("A new user has been created");
         return userMapper.userToUserViewDTO(savedUser);

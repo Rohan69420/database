@@ -5,6 +5,7 @@ import com.pgl1.database.handler.GenericAPIResponse;
 import com.pgl1.database.util.ResponseUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,6 +19,8 @@ import org.springframework.http.HttpStatus;
 import com.pgl1.database.dto.request.CreateLocationRequest;
 import com.pgl1.database.dto.request.UpdateLocationRequest;
 import com.pgl1.database.service.LocationService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/locations")
@@ -45,5 +48,10 @@ public class LocationController {
     public ResponseEntity<GenericAPIResponse<Void>> deleteLocation(@PathVariable Long locationId, HttpServletRequest request){
         locationService.deleteLocation(locationId);
         return new ResponseEntity<>(ResponseUtil.success(null, "Location deleted successfully", request.getRequestURI()),HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping
+    public ResponseEntity<GenericAPIResponse<List<ViewLocationResponse>>> fetchAllLocation(HttpServletRequest request){
+       return new ResponseEntity<>(ResponseUtil.success(locationService.fetchAll(), "All locations fetched", request.getRequestURI()), HttpStatus.OK);
     }
 }

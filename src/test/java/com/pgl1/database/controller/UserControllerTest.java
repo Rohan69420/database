@@ -1,6 +1,5 @@
 package com.pgl1.database.controller;
 
-import com.pgl1.database.dto.request.CreateItemRequest;
 import com.pgl1.database.dto.request.CreateUserRequest;
 import com.pgl1.database.dto.request.UpdateUserRequest;
 import com.pgl1.database.dto.response.ViewUserResponse;
