@@ -1,5 +1,6 @@
 package com.pgl1.database.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -67,6 +68,10 @@ public class User {
     @ManyToOne
     @JoinColumn(name="location_id")
     private Location location;
+
+    @OneToOne(mappedBy = "user")
+    @JsonIgnore
+    private RefreshToken refreshToken;
 
     @CreationTimestamp
     @Column(name = "created_date")
